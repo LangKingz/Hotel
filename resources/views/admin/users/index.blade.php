@@ -77,20 +77,22 @@
                                 @foreach ($posts as $post)
                                     
                                     <tr>
-                                        <td class="border px-4 py-2">{{++$nomor}}</td>
-                                        <td class="border px-4 py-2">
+                                        <td class=" px-4 py-2">{{++$nomor}}</td>
+                                        <td class=" px-4 py-2">
                                             {{$post->id}}
                                         </td>
-                                        <td class="border px-4 py-2">{{$post->name}}</td>
-                                        <td class="border px-4 py-2">{{$post->email}}</td>
-                                        <td class="border px-4 py-2">{{$post->role}}</td>
-                                        <td class="border px-4 py-2">
-                                            <a href="{{route('edit', $post->id)}}">
-                                                <button class="btn-edit">Edit</button>
+                                        <td class=" px-4 py-2">{{$post->name}}</td>
+                                        <td class=" px-4 py-2">{{$post->email}}</td>
+                                        <td class=" px-4 py-2">{{$post->role}}</td>
+                                        <td class=" px-4 py-2">
+                                            <a href="{{ route('edit', $post->id) }}">
+                                                <button type="button" class="btn-edit">Edit</button>
                                             </a>
-                                            <a href="{{route('delete', $post->id)}}">
-                                                <button class="btn-delete">Delete</button>
-                                            </a>
+                                            <form action="{{ route('delete', $post->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-delete">Delete</button>
+                                            </form>
                                         </td>
                                     </tr>
                                     
