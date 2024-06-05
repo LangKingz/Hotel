@@ -5,11 +5,14 @@
             <x-nav-link href="{{ route('category') }}" :active="request()->routeIs('category')">
                 {{ __('type') }}
             </x-nav-link>
-            <x-nav-link href="{{ route('users') }}" :active="request()->routeIs('users')">
-                {{ __('users') }}
+            <x-nav-link href="{{ route('room') }}" :active="request()->routeIs('room')">
+                {{ __('ruangan') }}
             </x-nav-link>
-            <x-nav-link href="{{ route('posts') }}" :active="request()->routeIs('posts')">
-                {{ __('posts') }}
+            <x-nav-link href="{{ route('bookings') }}" :active="request()->routeIs('bookings')">
+                {{ __('booking') }}
+            </x-nav-link>
+            <x-nav-link href="{{ route('payment') }}" :active="request()->routeIs('payment')">
+                {{ __('Payment') }}
             </x-nav-link>
         </div>
     </nav>

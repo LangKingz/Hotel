@@ -12,6 +12,8 @@ nav ul li{
 }
 </style>
 
+
+
 <div>
     <nav class="flex justify-between items-center px-3 py-2">
         <div class="title">
@@ -37,7 +39,7 @@ nav ul li{
                       {{Auth::user()->name}}
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li><a class="dropdown-item" href="{{route('dashboard')}}">Action</a></li>
                       <li><a class="dropdown-item" href="#">Another action</a></li>
                       <li><form action="{{route('logout')}}" x-data method="POST">
                         @csrf

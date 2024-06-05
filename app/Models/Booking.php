@@ -26,4 +26,11 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
+    // Booking.php
+
+    public function roomType()
+    {
+        return $this->belongsTo(RoomType::class);
+    }
 }
