@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Payment;
 use App\Models\Room;
 use App\Models\RoomType;
 use App\Models\User;
@@ -34,25 +35,47 @@ class BookingController extends Controller
             'room_id' => 'required|exists:rooms,id',
             'user_id' => 'required|exists:users,id',
             'check_in_date' => 'required|date',
-            'check_out_date' => 'required|date',
-            'room_type_id' => 'required|exists:room_types,id',
-            // 'status' => 'required|in:pending,approved,rejected',
+            'check_out_date' => 'required|date|after:check_in_date',
         ]);
 
-        $roomType = RoomType::findOrFail($request->room_type_id);
+        // Mengambil ruangan beserta tipe ruangan
+        $room = Room::with('roomType')->findOrFail($request->room_id);
+        $roomType = $room->roomType;
+
         $checkIn = Carbon::parse($request->check_in_date);
         $checkOut = Carbon::parse($request->check_out_date);
         $totalDays = $checkIn->diffInDays($checkOut);
 
+        // Menghitung total harga
         $totalPrice = $roomType->price * $totalDays;
 
-        $bookingData = $request->all();
-        $bookingData['total_price'] = $totalPrice;
+        // Tambahkan harga sarapan jika dipilih
+        $breakfastPrice = 0;
+        if ($request->has('breakfast') && $request->breakfast) {
+            $breakfastPrice = 80000; // Misalkan harga sarapan adalah 80,000 per hari
+            $totalPrice += $breakfastPrice * $totalDays; // Perbaikan di sini
+        }
 
-        Booking::create($bookingData);
+        $booking = Booking::create([
+            'room_id' => $request->room_id,
+            'user_id' => $request->user_id,
+            'check_in_date' => $request->check_in_date,
+            'check_out_date' => $request->check_out_date,
+            'total_price' => $totalPrice,
+            'breakfast' => $request->breakfast ? true : false,
+            'breakfast_price' => $breakfastPrice,
+        ]);
+
+        Payment::create([
+            'booking_id' => $booking->id,
+            'amount' => $totalPrice,
+            'payment_date' => Carbon::now(),
+        ]);
 
         return redirect()->route('bookings')->with('success', 'Booking berhasil dibuat.');
     }
+
+
 
     // Menampilkan detail booking
     public function show(Booking $booking)
@@ -71,36 +94,37 @@ class BookingController extends Controller
     }
 
     // Mengupdate booking di database
-    public function update(Request $request, Booking $booking)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'room_id' => 'required|exists:rooms,id',
             'user_id' => 'required|exists:users,id',
             'check_in_date' => 'required|date',
-            'check_out_date' => 'required|date',
+            'check_out_date' => 'required|date|after:check_in_date',
             'room_type_id' => 'required|exists:room_types,id',
         ]);
 
+        $booking = Booking::findOrFail($id);
         $roomType = RoomType::findOrFail($request->room_type_id);
         $checkIn = Carbon::parse($request->check_in_date);
         $checkOut = Carbon::parse($request->check_out_date);
         $totalDays = $checkIn->diffInDays($checkOut);
 
+        $totalPrice = $roomType->price * $totalDays;
+
+        // Tambahkan harga sarapan jika dipilih
+        $breakfastPrice = 0;
+        if ($request->has('breakfast') && $request->breakfast) {
+            $breakfastPrice = 80000; // Misalkan harga sarapan adalah 50 per hari
+            $totalPrice += $breakfastPrice * $totalDays;
+        }
+
         $bookingData = $request->all();
-        $bookingData['total_price'] = $roomType->price * $totalDays;
+        $bookingData['total_price'] = $totalPrice;
+        $bookingData['breakfast'] = $request->breakfast ? true : false;
+        $bookingData['breakfast_price'] = $breakfastPrice;
 
         $booking->update($bookingData);
-
-        // Update room status if room_id is changed
-        if ($booking->isDirty('room_id')) {
-            $oldRoom = Room::findOrFail($booking->getOriginal('room_id'));
-            $oldRoom->availability_status = true;
-            $oldRoom->save();
-
-            $newRoom = Room::findOrFail($request->room_id);
-            $newRoom->availability_status = false;
-            $newRoom->save();
-        }
 
         return redirect()->route('bookings')->with('success', 'Booking berhasil diupdate.');
     }

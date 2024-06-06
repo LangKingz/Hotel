@@ -25,9 +25,10 @@ class UserBookingController extends Controller
 
     public function create($roomId)
     {
-        $room = Room::findOrFail($roomId);
+        $room = Room::with('roomType','images')->findOrFail($roomId);
         return view('user.bookings.create', compact('room'));
     }
+
 
     public function store(Request $request)
     {
@@ -47,29 +48,35 @@ class UserBookingController extends Controller
 
         $totalPrice = $roomType->price * $totalDays;
 
+        // Tambahkan harga sarapan jika dipilih
+        $breakfastPrice = 0;
+        if ($request->has('breakfast') && $request->breakfast) {
+            $breakfastPrice = 80000; // Misalkan harga sarapan adalah 50 per hari
+            $totalPrice += $breakfastPrice * $totalDays;
+        }
+
         $booking = Booking::create([
             'room_id' => $request->room_id,
             'user_id' => $request->user_id,
             'check_in_date' => $request->check_in_date,
             'check_out_date' => $request->check_out_date,
             'total_price' => $totalPrice,
-        ]);
-
-        $paymentDate = $request->check_in_date;
-
-        Payment::create([
-            'booking_id' => $booking->id,
-            'amount' => $totalPrice, // Use total price as payment amount
-            'payment' => $paymentDate
+            'breakfast' => $request->breakfast ? true : false,
+            'breakfast_price' => $breakfastPrice,
         ]);
 
         // Update room status to unavailable
-        $room = Room::findOrFail($request->room_id);
-        $room->availability_status = false; // Set to unavailable
+        $room->availability_status = false;
         $room->save();
 
+        // Create payment
+        Payment::create([
+            'booking_id' => $booking->id,
+            'amount' => $totalPrice,
+            'payment_date' => Carbon::now(),
+        ]);
+
         return redirect()->route('show-user', ['booking' => $booking->id])->with('success', 'Booking successful.');
-        // return redirect()->route('user-dashboard')->with('success', 'Booking successful.');
     }
 
 
@@ -77,7 +84,11 @@ class UserBookingController extends Controller
     {
         // Mengambil booking dengan relasi payment
         $booking = Booking::with('payment')->findOrFail($id);
-
         return view('user.bookings.show', compact('booking'));
+    }
+    public function showDetail($roomId)
+    {
+        $detail = Room::with('roomType', 'images')->findOrFail($roomId);
+        return view('user.bookings.create', compact('room'));
     }
 }

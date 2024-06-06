@@ -37,7 +37,7 @@
                                         <td>{{$payment->booking->user->name}}</td>
                                         <td>{{ $payment->amount }}</td>
                                         <td>{{ $payment->payment_date }}</td>
-                                        <td>{{ $payment->status }}</td>
+                                        <td>{{ $payment->is_paid ? 'sudah dibayar' : 'belum dibayar' }}</td>
                                         <td>
                                             <a href="{{ route('edit-payment', $payment->id) }}" class="btn btn-sm btn-primary">Edit</a>
                                             <form action="{{ route('delete-payment', $payment->id) }}" method="POST" style="display: inline;">

@@ -1,3 +1,9 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+
+
 <x-app-layout>
     <x-slot name='header'>
         @livewire('secbar')
@@ -8,8 +14,7 @@
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Your post listing code goes here -->
                 <div class="p-6">
-                    <h1 class="mb-3">Buat Payment</h1>
-                @if ($errors->any())
+                    @if ($errors->any())
                 <div class="alert alert-danger">
                          <ul>
                             @foreach ($errors->all() as $error)
@@ -18,8 +23,10 @@
                         </ul>
                     </div>
                 @endif
-                <form action="{{ route('store-payment') }}" method="POST">
+                <form action="{{ route('update-payment',$payment->id) }}" method="POST">
                     @csrf
+                    @method('PUT')
+                    <input type="text" name="id" value="{{ $payment->id }}">
                     <div class="mt-4">
                         <label for="room_id">Room</label>
                         <select class="form-control" name="booking_id" id="room_id">
@@ -32,13 +39,13 @@
                     <div class="mb-3">
                         <label for="availability_status" class="form-label">Availability Status</label>
                         <select class="form-control" id="availability_status" name="is_paid" required>
-                            <option value="1">Sudah dibayar</option>
-                            <option value="0">belum dibayar</option>
+                            <option value="1" {{ $payment->is_paid ? 'selected' : ''}}>Sudah dibayar</option>
+                            <option value="0" {{ !$payment->is_paid ? 'selected' : ''}}>belum dibayar</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="status">payment date</label>
-                        <input type="date" name="payment_date" id="payment_date" class="form-control" required>
+                        <input type="date" name="payment_date" id="payment_date" class="form-control" value="{{$payment->payment_date}}" required>
                     </div>
                     <div class="mt-4">
                         <button class="btn btn-primary" type="submit">Simpan</button>

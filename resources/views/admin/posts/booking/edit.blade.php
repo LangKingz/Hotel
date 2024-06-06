@@ -49,6 +49,10 @@
                         <label for="check_out_date" class="form-label">Check-out Date</label>
                         <input type="date" class="form-control" id="check_out_date" name="check_out_date" value="{{ $booking->check_out_date }}" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="breakfast" class="form-label">Include Breakfast?</label>
+                        <input type="checkbox" id="breakfast" name="breakfast" value="1" {{ $booking->breakfast ? 'checked' : '' }}>
+                    </div>
                     <button type="submit" class="btn btn-primary">Update Booking</button>
                 </form>
                 </div>

@@ -25,7 +25,8 @@
                             <th>Check-in</th>
                             <th>Check-out</th>
                             <th>Total price</th>
-                            <th>status</th>
+                            <th>Breakfast</th>
+                            <th>harga sarapan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -39,7 +40,10 @@
                                 <td>{{ $booking->check_in_date }}</td>
                                 <td>{{ $booking->check_out_date }}</td>
                                 <td>{{ $booking->total_price }}</td>
-                                <td>{{ $booking->status }}</td>
+                                <td>{{$booking->breakfast}}</td>
+                                <td>{{$booking->breakfast_price}}</td>
+
+                               
                                 <td>
                                     <a href="{{ route('show-booking', $booking->id) }}">Lihat</a>
                                     <a href="{{ route('edit-booking', $booking->id) }}">Edit</a>

@@ -33,22 +33,13 @@
                             @endforeach
                         </select>
                     </div>
-                    {{-- <div class="mt-4">
-                        <label for="room_id">status</label>
-                        <select class="form-control" name="status" id="room_id">
-                            
-                                <option value="pending">pending</option>
-                                <option value="approved">approved</option>
-                                <option value="rejected">rejected</option>
-                        
-                        </select>
-                    </div> --}}
-                    <label for="room_type_id">Tipe Kamar:</label>
+            
+                    {{-- <label for="room_type_id">Tipe Kamar:</label>
                         <select name="room_type_id" id="room_type_id">
                             @foreach($roomType as $roomTypes)
                                 <option value="{{ $roomTypes->id }}">{{ $roomTypes->type_name }}</option>
                             @endforeach
-                        </select>
+                        </select> --}}
                     <div class="mt-4">
                         <label for="room_id">User</label>
                         <select class="form-control" name="user_id" id="user_id">
@@ -65,6 +56,11 @@
                     <div class="mt-4">
                         <label for="check_out">Check-out</label>
                         <input class="form-control" type="date" name="check_out_date" id="check_out" value="{{ isset($booking) ? $booking->check_in_date : '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="breakfast" class="form-label">Include Breakfast?</label>
+                        <input type="checkbox" id="breakfast" name="breakfast" value="1">
                     </div>
 
                     <div class="mt-4">

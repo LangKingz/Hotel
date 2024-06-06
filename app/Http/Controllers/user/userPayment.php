@@ -8,19 +8,24 @@ use Illuminate\Http\Request;
 
 class userPayment extends Controller
 {
+    // fungsi pembayaran untuk user
     public function index()
     {
-        $payments = Payment::with('booking.user', 'booking.room')->get(); // Assuming a Payment belongs to a Booking
+        $payments = Payment::with('booking.user', 'booking.room')->get(); 
         return view('user.payment.index', compact('payments'));
     }
+
+
 
     public function confirm($id)
     {
         $payment = Payment::findOrFail($id);
-        $payment->status = 'success';
+        $payment->is_paid = true;
+        
         $payment->save();
 
-        return redirect()->route('dashboard')->with('success', 'Payment confirmed successfully.');
+
+        return redirect()->route('user-payment')->with('success', 'Payment confirmed successfully.');
     }
 
 }

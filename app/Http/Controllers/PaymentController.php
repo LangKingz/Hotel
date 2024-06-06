@@ -31,21 +31,25 @@ class PaymentController extends Controller
         $request->validate([
             'booking_id' => 'required|exists:bookings,id',
             'payment_date' => 'required|date',
-            // 'status' => 'required|in:pending,completed,cancelled',
+            'is_paid' => 'required|',
         ]);
 
         // Mengambil data booking berdasarkan ID yang diberikan
         $booking = Booking::findOrFail($request->booking_id);
 
         // Mengambil nilai "price" dari booking dan menggunakan nilainya sebagai "amount" dalam pembayaran
-        $amount = $booking->total_price;
+        $total_price = $booking->total_price;
+        $price_breakfast = $booking->breakfast_price;
+        
+        $amount =  $total_price + $price_breakfast;
+
 
         // Menyimpan data pembayaran ke dalam basis data
         $paymentData = [
             'booking_id' => $booking->id,
             'amount' => $amount,
             'payment_date' => $request->payment_date,
-            // 'status' => $request->status,
+            'is_paid' => $request->is_paid,
         ];
 
         Payment::create($paymentData);
@@ -59,22 +63,36 @@ class PaymentController extends Controller
         return view('admin.posts.payments.show', compact('payment'));
     }
 
-    public function edit(Payment $payment)
+    public function edit($id)
     {
         $bookings = Booking::all();
+        $payment = Payment::findOrFail($id);
         return view('admin.posts.payment.edit', compact('payment', 'bookings'));
     }
 
-    public function update(Request $request, Payment $payment)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'booking_id' => 'required|exists:bookings,id',
-            'amount' => 'required|numeric',
             'payment_date' => 'required|date',
-            'status' => 'required|string',
+            'is_paid' => 'required|boolean',
         ]);
 
-        $payment->update($request->all());
+        $payment = Payment::findOrFail($id);
+        $booking = Booking::findOrFail($request->booking_id);
+
+        // Mengambil nilai "total_price" dari booking dan menggunakan nilainya sebagai "amount" dalam pembayaran
+        $amount = $booking->total_price;
+
+        // Menyimpan data pembayaran ke dalam basis data
+        $paymentData = [
+            'booking_id' => $booking->id,
+            'amount' => $amount,
+            'payment_date' => $request->payment_date,
+            'is_paid' => $request->is_paid,
+        ];
+
+        $payment->update($paymentData);
 
         return redirect()->route('payment')->with('success', 'Payment updated successfully.');
     }
