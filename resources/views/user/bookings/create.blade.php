@@ -45,7 +45,7 @@
         </div>
         <div class="container">
             <h1>Booking Room: {{ $room->room_number }}</h1>
-            <form action="{{ route('store-user-booking') }}" method="POST">
+            <form id="booking-form" action="{{ route('store-user-booking') }}" method="POST">
                 @csrf
                 <label for="">Nama</label>
                 <input type="text" value="{{auth()->user()->name}} ">
@@ -53,7 +53,7 @@
                 <input type="text" value="{{auth()->user()->phone_number}} ">
                 <label for="">user id</label>
                 <input type="text" name="user_id" value="{{ auth()->user()->id }}">
-
+        
                 <label for="">room id</label>
                 <input type="text" name="room_id" value="{{ $room->id }}">
         
@@ -74,7 +74,19 @@
                 <button type="submit" class="btn btn-primary">Book Now</button>
             </form>
         </div>
+        
     </main>
     
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("booking-form").addEventListener("submit", function(event) {
+            var confirmation = confirm("Are you sure you want to book this room?");
+            if (!confirmation) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
 </html>

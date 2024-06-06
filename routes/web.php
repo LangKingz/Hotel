@@ -6,6 +6,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\postController;
 use App\Http\Controllers\roomController;
 use App\Http\Controllers\user\UserBookingController as UserUserBookingController;
+use App\Http\Controllers\user\userBytipe;
 use App\Http\Controllers\user\userPayment;
 // use App\Http\Controllers\UserBookingController;
 use Illuminate\Support\Facades\Route;
@@ -92,5 +93,9 @@ Route::middleware([
 
         Route::get('/user/payment', [userPayment::class, 'index'])->name('user-payment');
         Route::post('/user/payment/{id}/confirm', [userPayment::class, 'confirm'])->name('confirm-payment');
+        
+        Route::get('/rooms/type/{roomType}', [userBytipe::class, 'showByType'])->name('bytype');
+        Route::get('/home', [userBytipe::class, 'index'])->name('rooms');
+
     });
 });
